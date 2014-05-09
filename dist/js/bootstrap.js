@@ -1220,7 +1220,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
       var $tip = this.tip()
 
       this.setContent()
-
+      this.setAriaDescribedBy()
       if (this.options.animation) $tip.addClass('fade')
 
       var placement = typeof this.options.placement == 'function' ?
@@ -1342,6 +1342,7 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
     var $tip = this.tip()
     var e    = $.Event('hide.bs.' + this.type)
 
+    this.removeAriaDescribedBy()
     function complete() {
       if (that.hoverState != 'in') $tip.detach()
       that.$element.trigger('hidden.bs.' + that.type)
@@ -1439,6 +1440,25 @@ if (typeof jQuery === 'undefined') { throw new Error('Bootstrap\'s JavaScript re
 
   Tooltip.prototype.arrow = function () {
     return this.$arrow = this.$arrow || this.tip().find('.tooltip-arrow')
+  }
+
+  Tooltip.prototype.uid = function (prefix) {
+    var id =  prefix + Math.floor( Math.random() * 1000000 )
+
+    while ($('#' + id).length) {
+      id +=  Math.floor( Math.random() * 1000000 )
+    }
+
+    return id
+  }
+
+  Tooltip.prototype.setAriaDescribedBy = function() {
+    var tipId = this.$tip.attr('id', this.uid(this.type))
+    this.$element.attr('aria-describedby', tipId)
+  }
+
+  Tooltip.prototype.removeAriaDescribedBy = function() {
+    this.$element.removeAttr('aria-describedby')
   }
 
   Tooltip.prototype.validate = function () {
